@@ -33,9 +33,6 @@
     </MASM>
   </ItemGroup>
   <ItemGroup>
-    <None Include="baby.inc">
-      <Filter>源文件</Filter>
-    </None>
     <None Include="babybox.inc">
       <Filter>源文件</Filter>
     </None>

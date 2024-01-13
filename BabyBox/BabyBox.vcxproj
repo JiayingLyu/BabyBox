@@ -142,7 +142,6 @@
     <MASM Include="babybox.asm" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="baby.inc" />
     <None Include="babybox.inc" />
   </ItemGroup>
   <ItemGroup>

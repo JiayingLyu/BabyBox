@@ -4,7 +4,6 @@
 //
 #define IDR_ACCELERATOR1                101
 #define IDD_DIALOG1                     102
-#define IDR_MENU1                       108
 #define IDR_ACCELERATOR2                109
 #define IDC_BUTTON2                     1007
 #define IDC_NEW                         1007
@@ -30,6 +29,8 @@
 #define IDC_BLEVEL9                     1138
 #define IDC_BLEVEL10                    1139
 #define IDC_BUTTON1                     1142
+#define IDC_BLEVEL11                    1145
+#define IDC_BLEVEL12                    1146
 #define ID_40004                        40004
 #define ID_40005                        40005
 #define ID_40006                        40006

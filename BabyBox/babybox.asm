@@ -1,6 +1,6 @@
 .386
 .model flat, stdcall
-option casemap : none
+option casemap: none
 
 include babybox.inc
 
