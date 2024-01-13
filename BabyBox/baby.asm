@@ -50,48 +50,6 @@ mainWindowsId HWND ?
 mainWindowsDC HDC ? ;"Handle to a Device Context" 
 mainBitmapDC HDC ?
 
-; 地图区域x
-MAP_X equ 35
-; 地图区域y
-MAP_Y equ 90
-; 格子尺寸
-GRID_SIZE equ 48
-; 地图尺寸,结合size，这边是10 * 10 格子
-MAP_SIZE equ 480
-
-; 地图类型
-; 无
-GRID_NULL equ 0
-; 墙
-GRID_WALL equ 1
-; 空地
-GRID_EMPTY equ 2
-; 玩家
-GRID_BABY equ 3
-; 箱子不在目标点
-GRID_BOX equ 4
-; 目标点
-GRID_TARGET equ 5
-; 箱子在目标点
-GRID_BOX_TARGET equ 6
-; 朝上的玩家
-GRID_BABY_UP equ 7
-; 朝右的玩家
-GRID_BABY_RIGHT equ 8
-; 朝下的玩家
-GRID_BABY_DOWN equ 9
-; 朝左的玩家
-GRID_BABY_LEFT equ 10
-
-; 初始化的场景
-SCENE_INITIAL equ 0
-; 选择关卡场景
-SCENE_CHOOSE_LEVEL equ 1
-; 关卡场景
-SCENE_LEVEL equ 2
-; 通关场景
-SCENE_DESTINATION equ 3
-
 .code
 
 ; 加载位图
