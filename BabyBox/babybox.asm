@@ -78,7 +78,7 @@ handleButLEVEL			dd	10	dup(0)
 butLEVELBitmaps HBITMAP 10 dup(0)
 .code
 
-WinMain PROC hInst : dword, hPrevInst : dword, cmdLine : dword, cmdShow : dword
+WinMain proc hInst : dword, hPrevInst : dword, cmdLine : dword, cmdShow : dword
 	local wc : WNDCLASSEX; 窗口类
 	local msg : MSG; 消息
 	local hWnd : HWND; 对话框句柄
