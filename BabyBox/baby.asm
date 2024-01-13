@@ -11,15 +11,15 @@ include babybox.inc
 
 initialImagePath byte "./pic/title.bmp", 0h; 初始化显示的图片，他们是作者团队和游戏名
 ; 把player换成了baby
-boxImagePath byte "./pic/box.bmp", 0h ; 箱子
-babyUPImagePath byte "./pic/player-up.bmp", 0h
-babyRIGHTImagePath byte "./pic/player-right.bmp", 0h
-babyDOWNImagePath byte "./pic/player-down.bmp", 0h
-babyLEFTImagePath byte "./pic/player-left.bmp", 0h
-wallImagePath byte "./pic/wall.bmp", 0h ; 墙壁
-emptyImagePath byte "./pic/empty.bmp", 0h ; 空的地方
-targetImagePath byte "./pic/target.bmp", 0h ; 目标点
-boxTargetImagePath byte "./pic/box-target.bmp", 0h  ;放到目标的箱子
+boxImagePath byte "./asset/box.bmp", 0h ; 箱子
+babyUPImagePath byte "./asset/baby_up.bmp", 0h
+babyRIGHTImagePath byte   "./asset/baby_right.bmp",0h
+babyDOWNImagePath byte  "./asset/baby_down.bmp", 0h
+babyLEFTImagePath byte  "./asset/baby_left.bmp", 0h
+wallImagePath byte "./asset/wall.bmp", 0h ; 墙壁
+emptyImagePath byte "./asset/empty.bmp", 0h ; 空的地方
+targetImagePath byte "./asset/target.bmp", 0h ; 目标点
+boxTargetImagePath byte "./asset/box_target.bmp", 0h  ;放到目标的箱子
 
 destinationImagePath byte "./pic/clear.bmp", 0h ; 终点图片
 
