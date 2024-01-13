@@ -2,7 +2,6 @@
 .model flat, stdcall
 option casemap : none
 
-include baby.inc
 include babybox.inc
 
 .data

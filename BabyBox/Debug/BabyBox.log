@@ -1,1 +1,5 @@
-﻿  BabyBox.vcxproj -> E:\VisualStudio\VSProject\BabyBoxGit\BabyBox\Debug\BabyBox.exe
+﻿  Assembling baby.asm...
+  Assembling babybox.asm...
+babybox.asm(130): warning A6004: procedure argument or local not referenced : hPrevInst
+babybox.asm(130): warning A6004: procedure argument or local not referenced : cmdLine
+  BabyBox.vcxproj -> E:\VisualStudio\VSProject\BabyBoxGit\BabyBox\Debug\BabyBox.exe
