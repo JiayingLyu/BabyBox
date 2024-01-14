@@ -13,7 +13,7 @@ extern CurrentMapText: dword, OriginMapText: dword, CurrPosition: dword
 CreateMap1 proc
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 	.if((ebx > 29 && ebx < 41) || (ebx > 48 && ebx < 60))
 	mov dword ptr CurrentMapText[ebx * 4], GRID_WALL
 	inc ebx
@@ -36,7 +36,7 @@ CreateMap1 proc
 	.endw
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 	mov eax, dword ptr CurrentMapText[ebx * 4]
 	.if eax == 3 || eax == 4
 	mov dword ptr OriginMapText[ebx * 4], 2
@@ -55,7 +55,7 @@ CreateMap1 endp
 CreateMap2 proc
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 	.if (ebx < 11 || ebx == 12 || ebx == 19 || ebx == 20 || ebx == 22 || (ebx > 23 && ebx < 28) || ebx == 29 || ebx == 30 || ebx == 32 || ebx == 34 || ebx == 39 || ebx == 40 || ebx == 42 || ebx == 44 || ebx == 46 || ebx == 48 || ebx == 49)
 	mov dword ptr CurrentMapText[ebx * 4], GRID_WALL
 	inc ebx
@@ -78,7 +78,7 @@ CreateMap2 proc
 	.endw
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 	mov eax, dword ptr CurrentMapText[ebx * 4]
 	.if eax == 3 || eax == 4
 	mov dword ptr OriginMapText[ebx * 4], 2
@@ -97,7 +97,7 @@ CreateMap2 endp
 CreateMap3 proc
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 	.if((ebx > 11 && ebx < 16) || (ebx > 24 && ebx < 27) || (ebx > 45 && ebx < 48) || (ebx > 71 && ebx < 78) || ebx == 22 || ebx == 32 || ebx == 36 || ebx == 42 || ebx == 52 || ebx == 57 || ebx == 62 || ebx == 67)
 	mov dword ptr CurrentMapText[ebx * 4], GRID_WALL
 	inc ebx
@@ -120,7 +120,7 @@ CreateMap3 proc
 	.endw
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx <MAX_LEN	
 	mov eax, dword ptr CurrentMapText[ebx * 4]
 	.if eax == 3 || eax == 4
 	mov dword ptr OriginMapText[ebx * 4], 2
@@ -138,7 +138,7 @@ CreateMap3 endp
 CreateMap4 proc
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 	.if ((ebx > 12 && ebx < 17) || ebx == 22 || ebx == 23 || ebx == 26 || ebx == 32 || ebx == 36 || ebx == 42 || ebx == 43 || ebx == 46 || ebx == 47 || ebx == 52 || ebx == 53 || ebx == 57 || ebx == 62 || ebx == 67 || ebx == 72 || ebx == 77 || (ebx > 81 && ebx < 88))
 	mov dword ptr CurrentMapText[ebx * 4], 1
 	inc ebx
@@ -161,7 +161,7 @@ CreateMap4 proc
 	.endw
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx <MAX_LEN	
 	mov eax, dword ptr CurrentMapText[ebx * 4]
 	.if eax == 3 || eax == 4
 	mov dword ptr OriginMapText[ebx * 4], 2
@@ -182,7 +182,7 @@ CreateMap4 endp
 CreateMap5 proc
 	
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 		.if ( ebx < 12 || ( ebx > 16 && ebx < 22 ) || ( ebx > 27 && ebx < 32 ) || ( ebx > 37 && ebx < 41 ) || ebx == 49 || ebx == 50 || ebx == 59 || ebx == 60 || ebx == 69 || ebx == 70 || ebx == 79 || ebx == 80 || ebx > 88 )
 			mov dword ptr CurrentMapText[ebx * 4], 0
 			inc ebx 
@@ -205,7 +205,7 @@ CreateMap5 proc
 	.endw
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 		mov eax, dword ptr CurrentMapText[ebx * 4]
 		.if eax == 3 || eax == 4
 			mov dword ptr OriginMapText[ebx * 4], 2
@@ -223,7 +223,7 @@ CreateMap5 endp
 
 CreateMap6 proc
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx <MAX_LEN	
 		.if ( ebx < 13 || (ebx > 19 && ebx < 22) || (ebx > 29 && ebx < 32) || (ebx > 39 && ebx < 42) || (ebx > 49 && ebx < 52) || ebx == 79 || ebx > 88)
 			mov dword ptr CurrentMapText[ebx * 4], 0
 			inc ebx 
@@ -246,7 +246,7 @@ CreateMap6 proc
 	.endw
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx <MAX_LEN	
 		mov eax, dword ptr CurrentMapText[ebx * 4]
 		.if eax == 3 || eax == 4
 			mov dword ptr OriginMapText[ebx * 4], 2
@@ -263,7 +263,7 @@ CreateMap6 endp
 
 CreateMap7 proc
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 		.if ( (ebx > 12 && ebx < 19) || ebx == 23 || ebx == 28 || (ebx > 30 && ebx < 34) || ebx == 38 || ebx == 41 || ebx == 48 || ebx == 51 || ebx == 57 || ebx == 58 || (ebx > 60 && ebx < 65) || ebx == 67 || (ebx > 73 && ebx < 78))
 			mov dword ptr CurrentMapText[ebx * 4], 1
 			inc ebx 
@@ -286,7 +286,7 @@ CreateMap7 proc
 	.endw
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 		mov eax, dword ptr CurrentMapText[ebx * 4]
 		.if eax == 3 || eax == 4
 			mov dword ptr OriginMapText[ebx * 4], 2
@@ -303,7 +303,7 @@ CreateMap7 endp
 
 CreateMap8 proc
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 		.if ( (ebx > 12 && ebx < 17) || ebx == 23 || ebx == 26 || ebx == 32 || ebx == 33 || ebx == 36 || ebx == 37 || ebx == 42 || ebx == 47 || ebx == 51 || ebx == 52 || ebx == 57 || ebx == 58 || ebx == 61 || ebx == 64 || ebx == 68 || ebx == 71 || ebx == 78 || (ebx > 80 && ebx < 89) )
 			mov dword ptr CurrentMapText[ebx * 4], 1
 			inc ebx 
@@ -326,7 +326,7 @@ CreateMap8 proc
 	.endw
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 		mov eax, dword ptr CurrentMapText[ebx * 4]
 		.if eax == 3 || eax == 4
 			mov dword ptr OriginMapText[ebx * 4], 2
@@ -342,7 +342,7 @@ CreateMap8 endp
 
 CreateMap9 proc
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 		.if ( ebx < 11 || (ebx > 18 && ebx < 21) || (ebx > 28 && ebx < 31) || (ebx > 38 && ebx < 41) || (ebx > 48 && ebx < 51) || (ebx > 58 && ebx < 61) || (ebx > 68 && ebx < 71) || ebx > 78)
 			mov dword ptr CurrentMapText[ebx * 4], 0
 			inc ebx 
@@ -365,7 +365,7 @@ CreateMap9 proc
 	.endw
 
 	xor ebx, ebx
-	.while ebx < REC_LEN
+	.while ebx < MAX_LEN	
 		mov eax, dword ptr CurrentMapText[ebx * 4]
 		.if eax == 3 || eax == 4
 			mov dword ptr OriginMapText[ebx * 4], 2
@@ -382,43 +382,5 @@ CreateMap9 proc
 	ret
 CreateMap9 endp
 
-CreateMap10 proc
-	xor ebx, ebx
-	.while ebx < REC_LEN
-		.if ( ebx < 12 || ( ebx > 17 && ebx < 22) || ( ebx > 27 && ebx < 32) || ( ebx > 37 && ebx < 41 ) || ( ebx > 48 && ebx < 51 ) || ( ebx > 58 && ebx < 61 ) || ( ebx > 68 && ebx < 71 ) || ( ebx > 78 && ebx < 81 ) || ebx > 88  )
-			mov dword ptr CurrentMapText[ebx * 4], 0
-			inc ebx 
-		.elseif ( ebx == 24 || ebx == 34 || ebx == 44 || ebx == 45 || ebx == 52 || ebx == 54 || ebx == 55 || ebx == 57 || ebx == 62 || ebx == 67 || ebx == 72 || ebx == 73 || ebx == 74 || ebx == 76 || ebx == 77 )
-			mov dword ptr CurrentMapText[ebx * 4], 2
-			inc ebx
-		.elseif ebx == 75
-			mov dword ptr CurrentMapText[ebx * 4], 3
-			inc ebx
-		.elseif ( ebx == 35 || ebx == 46 || ebx == 53 || ebx == 56 || ebx == 64)
-			mov dword ptr CurrentMapText[ebx * 4], 4
-			inc ebx
-		.elseif ( ebx == 23 || ebx == 25 || ebx == 26 || ebx == 33 || ebx == 36 )
-			mov dword ptr CurrentMapText[ebx * 4], 5
-			inc ebx
-		.else
-			mov dword ptr CurrentMapText[ebx * 4], 1
-			inc ebx
-		.endif
-	.endw
-
-	xor ebx, ebx
-	.while ebx < REC_LEN
-		mov eax, dword ptr CurrentMapText[ebx * 4]
-		.if eax == 3 || eax == 4
-			mov dword ptr OriginMapText[ebx * 4], 2
-			inc ebx
-		.else
-			mov dword ptr OriginMapText[ebx * 4], eax
-			inc ebx
-		.endif
-	.endw
-	mov	CurrPosition, 75
-	ret
-CreateMap10 endp
 
 end

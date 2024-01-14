@@ -9,38 +9,37 @@ extern CurrentMapText: dword, OriginMapText: dword
 
 .data
 
-; bmp图片路径
-initialImagePath byte "./asset/choose.bmp", 0h
-destinationImagePath byte "./asset/choose.bmp", 0h
-boxImagePath byte "./asset/box.bmp", 0h
-babyUPImagePath byte "./asset/baby_up.bmp", 0h
-babyRIGHTImagePath byte   "./asset/baby_right.bmp",0h
-babyDOWNImagePath byte  "./asset/baby_down.bmp", 0h
-babyLEFTImagePath byte  "./asset/baby_left.bmp", 0h
-wallImagePath byte "./asset/wall.bmp", 0h
-emptyImagePath byte "./asset/empty.bmp", 0h
-targetImagePath byte "./asset/target.bmp", 0h
-boxTargetImagePath byte "./asset/box_target.bmp", 0h
+scene byte 0				; 游戏场景类型：0~3
+babyDirection dword 0		; 玩家方向
+mainWindowsId HWND ?		; windowid
 
-; bitmap
+mainWindowsDC HDC ?			; "Handle to a Device Context" 
+mainBitmapDC HDC ?			; "Handle to a Device Context" 
+
+; bmp图片路径、bitmap
+initialImagePath byte "./asset/choose.bmp", 0h
 initialBitmap HBITMAP ?
+destinationImagePath byte "./asset/choose.bmp", 0h
 destinationBitmap HBITMAP ?
+boxImagePath byte "./asset/box.bmp", 0h
 boxBitmap HBITMAP ?
+babyUPImagePath byte "./asset/baby_up.bmp", 0h
 babyUPBitmap HBITMAP ?
+babyRIGHTImagePath byte   "./asset/baby_right.bmp",0h
 babyRIGHTBitmap HBITMAP ?
+babyDOWNImagePath byte  "./asset/baby_down.bmp", 0h
 babyDOWNBitmap HBITMAP ?
+babyLEFTImagePath byte  "./asset/baby_left.bmp", 0h
 babyLEFTBitmap HBITMAP ?
+wallImagePath byte "./asset/wall.bmp", 0h
 wallBitmap HBITMAP ?
+emptyImagePath byte "./asset/empty.bmp", 0h
 emptyBitmap HBITMAP ?
+targetImagePath byte "./asset/target.bmp", 0h
 targetBitmap HBITMAP ?
+boxTargetImagePath byte "./asset/box_target.bmp", 0h
 boxTargetBitmap HBITMAP ?
 
-scene byte 0				; 游戏场景类型：0~3
-babyDirection dword 0		; 玩家朝向：0~3
-mainWindowsId HWND ?		; 主窗体id
-
-mainWindowsDC HDC ?			;"Handle to a Device Context" 
-mainBitmapDC HDC ?			;"Handle to a Device Context" 
 
 .code
 
@@ -54,22 +53,29 @@ setMainWindowsId endp
 ; 开始游戏
 startGame proc
 	mov scene, SCENE_LEVEL
-
 	ret
 startGame endp
 
+; 结束游戏
+endGame proc
+	mov scene, SCENE_DESTINATION
+	ret
+endGame endp
+
+; 选择关卡
 chooseLevel proc
 	mov scene, SCENE_INITIAL
 	invoke updateMap
-
 	ret
 chooseLevel endp
 
-endGame proc
-	mov scene, SCENE_DESTINATION
+; 设定角色方向
+setPlayerDirection proc direction: dword
+	mov eax, direction
+	mov babyDirection, eax
 
 	ret
-endGame endp
+setPlayerDirection endp
 
 ; 获取格子类型
 getGridType proc index: dword	
@@ -81,7 +87,7 @@ getGridType proc index: dword
 		add eax, babyDirection
 	.elseif eax == GRID_BOX
 		mov eax, OriginMapText[edi * 4]
-		.if eax == GRID_TARGET; 目标点
+		.if eax == GRID_TARGET
 			mov eax, GRID_BOX_TARGET
 		.else
 			mov eax, GRID_BOX
@@ -90,13 +96,6 @@ getGridType proc index: dword
 
 	ret
 getGridType endp
-
-setPlayerDirection proc direction: dword
-	mov eax, direction
-	mov babyDirection, eax
-
-	ret
-setPlayerDirection endp
 
 ; 重新绘制地图区域
 updateMap proc	
@@ -145,6 +144,7 @@ updateGrid proc index: dword
 	add eax, GRID_SIZE
 	MOV rect.bottom, eax
 
+	; 通知此区域无效需要更新
 	invoke InvalidateRect, mainWindowsId, addr rect, FALSE
 
 	ret
@@ -155,23 +155,22 @@ drawMap proc dc: HDC
 	local nextX: sword 
 	local nextY: sword
 	local colInd: dword 
-	
-	; 保存主窗体DC
+
 	mov eax, dc
 	mov mainWindowsDC, eax
+
 	invoke loadSceneBitmap
 	invoke beginDraw
 
-	.if scene == SCENE_INITIAL		; 绘制主界面
+	.if scene == SCENE_INITIAL	; 主界面
 		invoke drawImage, initialBitmap, MAP_X, MAP_Y, MAP_SIZE, MAP_SIZE
-	.elseif scene == SCENE_LEVEL		; 关卡场景
+	.elseif scene == SCENE_LEVEL ; 游戏
 		mov nextX, MAP_X
 		mov nextY, MAP_Y
 		mov colInd, 0
 		xor ebx, ebx
-		.while ebx < REC_LEN
+		.while ebx < MAX_LEN
 			invoke getGridType, ebx
-			; 该画啥画啥
 			.if eax == GRID_WALL
 				invoke drawImage, wallBitmap, nextX, nextY, GRID_SIZE, GRID_SIZE
 			.elseif eax == GRID_EMPTY
@@ -195,7 +194,6 @@ drawMap proc dc: HDC
 			add nextX, GRID_SIZE
 			inc colInd
 			.if colInd == 10
-				; 列号到10了，开始下一行
 				mov nextX, MAP_X
 				add nextY, GRID_SIZE
 				mov colInd, 0
@@ -204,9 +202,6 @@ drawMap proc dc: HDC
 			inc ebx
 		.endw
 	.elseif scene == SCENE_DESTINATION
-		; 通关场景
-		; 绘制通关图
-
 		invoke drawImage, destinationBitmap, MAP_X, MAP_Y, MAP_SIZE, MAP_SIZE
 	.else
 		invoke drawImage, initialBitmap, MAP_X, MAP_Y, MAP_SIZE, MAP_SIZE
@@ -217,19 +212,13 @@ drawMap proc dc: HDC
 	ret
 drawMap endp
 
+; 加载各个场景需要的bitmap
 loadSceneBitmap proc
-	; 加载位图
-
 	.if scene == SCENE_INITIAL
-		; 主界面场景
-		; 加载主界面位图
-
 		invoke LoadImage, NULL, offset initialImagePath, IMAGE_BITMAP, MAP_SIZE, MAP_SIZE, LR_LOADFROMFILE
 		mov initialBitmap, eax
-	.elseif scene == SCENE_LEVEL
-		; 关卡场景
-		; 加载格子位图
 
+	.elseif scene == SCENE_LEVEL
 		invoke LoadImage, NULL, offset boxImagePath, IMAGE_BITMAP, GRID_SIZE, GRID_SIZE, LR_LOADFROMFILE
 		mov boxBitmap, eax
 		invoke LoadImage, NULL, offset babyUPImagePath, IMAGE_BITMAP, GRID_SIZE, GRID_SIZE, LR_LOADFROMFILE
@@ -248,49 +237,28 @@ loadSceneBitmap proc
 		mov targetBitmap, eax
 		invoke LoadImage, NULL, offset boxTargetImagePath, IMAGE_BITMAP, GRID_SIZE, GRID_SIZE, LR_LOADFROMFILE
 		mov boxTargetBitmap, eax
+
 	.elseif scene == SCENE_DESTINATION
-		; 通关场景
-		
 		invoke LoadImage, NULL, offset destinationImagePath, IMAGE_BITMAP, MAP_SIZE, MAP_SIZE, LR_LOADFROMFILE
 		mov destinationBitmap, eax
+
 	.endif
 
 	ret
 loadSceneBitmap endp
 
+; 创建设备上下文，准备加载窗口
 beginDraw proc
-	; 创建DC
 	invoke CreateCompatibleDC, mainWindowsDC
 	mov mainBitmapDC, eax
-
 	ret
 beginDraw endp
 
-; 绘制位图
-; bitmap: HBITMAP 位图id
-; i32X: sword 绘制位置x
-; i32Y: sword 绘制位置y
-; u32Width: dword 绘制宽度
-; u32Height: dword 绘制高度
-drawImage proc bitmap: HBITMAP, i32X: sword, i32Y: sword, u32Width: dword, u32Height: dword
-	; 输出位图数据
-	invoke SelectObject, mainBitmapDC, bitmap
-	invoke BitBlt, mainWindowsDC, i32X, i32Y, u32Width, u32Height, mainBitmapDC, 0, 0, SRCCOPY
-	ret
-drawImage endp
-
+; 删除所有bitmap，删除DC
 endDraw proc
-	; 删除位图
-
 	.if scene == SCENE_INITIAL
-		; 主界面场景
-		; 删除主界面位图
-
 		invoke DeleteObject, initialBitmap
 	.elseif scene == SCENE_LEVEL
-		; 关卡场景
-		; 删除格子位图
-
 		invoke DeleteObject, boxBitmap
 		invoke DeleteObject, babyUPBitmap
 		invoke DeleteObject, babyRIGHTBitmap
@@ -301,15 +269,18 @@ endDraw proc
 		invoke DeleteObject, targetBitmap
 		invoke DeleteObject, boxTargetBitmap
 	.elseif scene == SCENE_DESTINATION
-		; 通关场景
-		; 删除通关图位图
-
 		invoke DeleteObject, destinationBitmap
 	.endif
 
-	; 删除DC
 	invoke DeleteDC, mainBitmapDC
 
 	ret
 endDraw endp
+
+; 绘制图像
+drawImage proc bitmap: HBITMAP, i32X: sword, i32Y: sword, u32Width: dword, u32Height: dword
+	invoke SelectObject, mainBitmapDC, bitmap
+	invoke BitBlt, mainWindowsDC, i32X, i32Y, u32Width, u32Height, mainBitmapDC, 0, 0, SRCCOPY
+	ret
+drawImage endp
 end

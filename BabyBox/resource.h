@@ -5,6 +5,7 @@
 #define IDR_ACCELERATOR1                101
 #define IDD_DIALOG1                     102
 #define IDR_ACCELERATOR2                109
+#define IDI_ICON1                       119
 #define IDC_BUTTON2                     1007
 #define IDC_NEW                         1007
 #define IDC_DATETIMEPICKER2             1008
@@ -45,7 +46,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        119
+#define _APS_NEXT_RESOURCE_VALUE        120
 #define _APS_NEXT_COMMAND_VALUE         40025
 #define _APS_NEXT_CONTROL_VALUE         1143
 #define _APS_NEXT_SYMED_VALUE           101

@@ -43,9 +43,4 @@
       <Filter>源文件</Filter>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="asset\Bitmap.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-  </ItemGroup>
 </Project>
