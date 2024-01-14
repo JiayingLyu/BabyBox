@@ -21,14 +21,12 @@ includelib msvcrt.lib
 
 MainPro             PROTO :DWORD, :DWORD, :DWORD, :DWORD	; 窗口主程序
 Respond				PROTO :DWORD, :DWORD, :DWORD, :DWORD	; 消息处理程序
-InitRec             PROTO :DWORD							; 初始化方格矩阵
-InitBack            PROTO       							; 初始化颜色数组
+InitHandle             PROTO :DWORD							; 初始化句柄
 InitBrush           PROTO       							; 初始化笔刷数组
-RefreshRec			PROTO									; 刷新矩阵
-MoveUp				PROTO									; 人物向上逻辑
-MoveDown			PROTO									; 人物向下逻辑
-MoveLeft			PROTO									; 人物向左逻辑
-MoveRight			PROTO									; 人物向右逻辑
+MoveUp				PROTO									; 人物向上
+MoveDown			PROTO									; 人物向下
+MoveLeft			PROTO									; 人物向左
+MoveRight			PROTO									; 人物向右
 CreateMap1			PROTO									; 创建地图
 CreateMap2			PROTO
 CreateMap3			PROTO
@@ -57,11 +55,11 @@ drawImage			PROTO :HBITMAP, :SWORD, :SWORD,: DWORD, : DWORD
 ; ————常量————
 
 MAX_LEN		EQU	100											; 最大长度
-DialogBack	EQU 00151611h
+BackgroundColor	EQU 00151611h
 
 
 ; 地图尺寸相关
-MAP_X equ 35												; 地图区域x
+MAP_X equ 40												; 地图区域x
 MAP_Y equ 90												; 地图区域y
 GRID_SIZE equ 48											; 格子尺寸
 MAP_SIZE equ 480											; 地图尺寸,10 * 10

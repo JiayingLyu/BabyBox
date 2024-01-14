@@ -39,10 +39,10 @@ CreateMap1 proc
 	.while ebx < MAX_LEN	
 	mov eax, dword ptr CurrentMapText[ebx * 4]
 	.if eax == 3 || eax == 4
-	mov dword ptr OriginMapText[ebx * 4], 2
+	mov dword ptr OriginMap[ebx * 4], 2
 	inc ebx
 	.else
-	mov dword ptr OriginMapText[ebx * 4], eax
+	mov dword ptr OriginMap[ebx * 4], eax
 	inc ebx
 	.endif
 	.endw

@@ -4,7 +4,7 @@ option casemap: none
 
 include babybox.inc
 
-public CurrentMapText, OriginMapText,CurrPosition,handleMain,handleAcce
+public CurrentMapText, OriginMap,CurrPosition,handleMain,handleAcce
 
 
 .data
@@ -29,35 +29,11 @@ tempLevel			dd		5 dup(0)		; 作为字符串缓冲区
 strZero byte "0", 0h
 isWin			db		0					; 判断是否成功
 CurrPosition	dd		0					; 记录人的位置
-OriginMapText	dd		MAX_LEN dup(0)		; 原始地图矩阵
+OriginMap	dd		MAX_LEN dup(0)		; 原始地图矩阵
 CurrentMapText  dd      MAX_LEN dup(0)		; 当前地图矩阵
 
 
 .code
-
-; 是否通关
-IsWin proc
-	xor eax, eax
-	mov eax, 0
-	; 检查矩阵中是否所有的目标都已到达
-	.while eax < MAX_LEN
-		.if OriginMapText[eax * 4] == 5 
-			.if CurrentMapText[eax * 4] == 4
-			jmp L1
-			.else 
-				jmp NotWin
-			.endif 
-		.endif
-L1:		inc eax
-	.endw
-	mov isWin, 1 
-	inc currentLevel ;关卡数+1
-	
-	ret
-NotWin:		
-	mov isWin, 0 
-	ret
-IsWin endp
 
 ; 创建当前关卡地图
 CreateLevelMap proc
@@ -102,7 +78,32 @@ UPDATE_MAP:
 	ret
 CreateLevelMap endp
 
+; 是否通关
+IsWin proc
+	xor eax, eax
+	mov eax, 0
+	; 检查矩阵中是否所有的目标都已到达
+	.while eax < MAX_LEN
+		.if OriginMap[eax * 4] == 5 
+			.if CurrentMapText[eax * 4] == 4
+			jmp L1
+			.else 
+				jmp NotWin
+			.endif 
+		.endif
+L1:		inc eax
+	.endw
+	mov isWin, 1 
+	inc currentLevel ;关卡数+1
+	
+	ret
+NotWin:		
+	mov isWin, 0 
+	ret
+IsWin endp
+
 Respond proc hWnd : dword, uMsg : UINT, wParam : WPARAM, lParam : LPARAM
+	; 响应各类事件
 	local hdc : HDC
 	local ps : PAINTSTRUCT
 
@@ -111,14 +112,14 @@ Respond proc hWnd : dword, uMsg : UINT, wParam : WPARAM, lParam : LPARAM
 		invoke LoadAccelerators, handleMain, IDR_ACCELERATOR2
 		mov handleAcce, eax
 		; 初始化矩阵和笔刷
-		invoke InitRec, hWnd
+		invoke InitHandle, hWnd
 		invoke InitBrush
 
 	.elseif uMsg == WM_PAINT
 	
 		invoke BeginPaint, hWnd, addr ps
 		mov hdc, eax
-		invoke FillRect, hdc, addr ps.rcPaint, handleDialogBrush; 绘制对话框背景
+		invoke FillRect, hdc, addr ps.rcPaint, handleDialogBrush; 绘制背景
 		
 		invoke drawMap, hdc ; 绘制地图
 		invoke EndPaint, hWnd, addr ps
@@ -152,28 +153,28 @@ Respond proc hWnd : dword, uMsg : UINT, wParam : WPARAM, lParam : LPARAM
 
 			invoke chooseLevel
 
-		; 上方向键
+		; 上
 		.elseif eax == IDC_UP
 			.if !isWin
 				invoke MoveUp
 				invoke IsWin
 			.endif
 
-		; 下方向键
+		; 下
 		.elseif eax == IDC_DOWN
 			.if !isWin
 				invoke MoveDown
 				invoke IsWin
 			.endif
 
-		; 左方向键
+		; 左
 		.elseif eax == IDC_LEFT
 			.if !isWin
 				invoke MoveLeft
 				invoke IsWin
 			.endif
 
-		; 右方向键
+		; 右
 		.elseif eax == IDC_RIGHT
 			.if !isWin
 				invoke MoveRight
@@ -241,9 +242,8 @@ Respond proc hWnd : dword, uMsg : UINT, wParam : WPARAM, lParam : LPARAM
 	ret
 Respond endp
 
-InitRec proc hWnd : dword
-	; 调用GetDlgItem函数获得句柄
-	; 包括整体背景的句柄等
+InitHandle proc hWnd : dword
+	; 初始化需要的句柄
 	invoke GetDlgItem, hWnd, IDC_STEP
 	mov handleStep, eax
 
@@ -284,53 +284,48 @@ InitRec proc hWnd : dword
 	mov handleButLEVEL[32], eax
 
 	ret
-	InitRec endp
+	InitHandle endp
 
 InitBrush proc
-	; 创建不同种类的画刷颜色
-	invoke CreateSolidBrush, DialogBack
+	; 创建笔刷
+	invoke CreateSolidBrush, BackgroundColor
 	mov handleDialogBrush, eax
 	ret
 InitBrush endp
 
 MoveUp proc
-	; 找到当前人的位置
 	xor esi, esi
-	mov esi, CurrPosition; 假设CurrPosition记录当前人的位置, esi记录当前人位置
+	mov esi, CurrPosition; esi-当前位置
 	mov edi, esi
-	sub edi, 10; edi记录人的上方位置
+	sub edi, 10; edi-上方位置
 
-	; 设置角色脸朝向
 	invoke setPlayerDirection, DIRECTION_UP
 
-	; 判断上方格子类型
-	; 如果是空地或结束点, 人移动
+	; 空或target
 	.if CurrentMapText[edi * 4] == GRID_EMPTY || CurrentMapText[edi * 4] == GRID_TARGET
-		mov  CurrPosition, edi; 改变人的当前位置
-		mov dword ptr CurrentMapText[edi * 4], GRID_BABY; 改变上方方格属性
-		mov eax, OriginMapText[esi * 4]
+		mov  CurrPosition, edi
+		mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+		mov eax, OriginMap[esi * 4]
 		mov CurrentMapText[esi * 4], eax
 		; 刷新格子
 		invoke updateGrid, edi
 		invoke updateGrid, esi
 
-	; 如果是箱子
+	; 箱子：判断箱子上方
 	.elseif CurrentMapText[edi * 4] == GRID_BOX
-		; 判断箱子那边是什么
 		xor ecx, ecx
 		mov ecx, edi
-		sub ecx, 10; ecx是人的上上方位置
+		sub ecx, 10; ecx-上上方位置
 
 		; 如果是围墙或箱子
 		.if CurrentMapText[ecx * 4] == GRID_WALL || CurrentMapText[ecx * 4] == GRID_BOX
 			; 刷新格子
 			invoke updateGrid, esi
-		.else
-			; 只可能是空地或存放点，可以移动
-			mov CurrPosition, edi; 改变人的当前位置
+		.else ; 可移动
+			mov CurrPosition, edi
 			mov dword ptr CurrentMapText[ecx * 4], GRID_BOX
 			mov dword ptr CurrentMapText[edi * 4], GRID_BABY
-			mov eax, OriginMapText[esi * 4]
+			mov eax, OriginMap[esi * 4]
 			mov CurrentMapText[esi * 4], eax
 			; 刷新格子
 			invoke updateGrid, ecx
@@ -339,52 +334,47 @@ MoveUp proc
 
 		.endif
 
+	; 墙
 	.else
-		; 是墙
+		
 		invoke updateGrid, esi
 	.endif
 	ret
 MoveUp endp
 
 MoveDown proc
-	; 找到当前人的位置
 	xor esi, esi
-	mov esi, CurrPosition; 假设CurrPosition记录当前人的位置, esi记录当前人位置
+	mov esi, CurrPosition
 	mov edi, esi
-	add edi, 10; edi记录人的下方位置
+	add edi, 10
 
-	; 设置角色脸朝向
 	invoke setPlayerDirection, DIRECTION_DOWN
 
-	; 判断下方格子类型
-	; 如果是空地或结束点, 人移动
 	.if CurrentMapText[edi * 4] == GRID_EMPTY || CurrentMapText[edi * 4] == GRID_TARGET
-		mov dword ptr CurrPosition, edi; 改变人的当前位置
-		mov dword ptr CurrentMapText[edi * 4], GRID_BABY; 改变下方方格属性
-		mov eax, OriginMapText[esi * 4]
+		mov dword ptr CurrPosition, edi
+		mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+		mov eax, OriginMap[esi * 4]
 		mov CurrentMapText[esi * 4], eax
 		; 刷新格子
 		invoke updateGrid, edi
 		invoke updateGrid, esi
 
-	; 如果是箱子
+	; 箱子
 	.elseif CurrentMapText[edi * 4] == GRID_BOX
-		; 判断箱子那边是什么
+
 		xor ecx, ecx
 		mov ecx, edi
-		add ecx, 10; ecx是人的下下方位置
+		add ecx, 10; ecx下下方位置
 
-		; 如果是围墙或箱子
+		; 围墙或箱子
 		.if CurrentMapText[ecx * 4] == GRID_WALL || CurrentMapText[ecx * 4] == GRID_BOX
-		; 删除了continue
-			; 刷新格子
 			invoke updateGrid, esi
 		.else
-			; 只可能是空地或存放点，可以移动
+			; 可以移动
 			mov CurrPosition, edi; 改变人的当前位置
 			mov dword ptr CurrentMapText[ecx * 4], GRID_BOX
 			mov dword ptr CurrentMapText[edi * 4], GRID_BABY
-			mov eax, OriginMapText[esi * 4]
+			mov eax, OriginMap[esi * 4]
 			mov CurrentMapText[esi * 4], eax
 			; 刷新格子
 			invoke updateGrid, ecx
@@ -393,50 +383,46 @@ MoveDown proc
 		.endif
 
 	.else
-		; 是墙
+		; 墙
 		invoke updateGrid, esi
 	.endif
 	ret
 MoveDown endp
 
 MoveLeft proc
-	; 找到当前人的位置
-	xor esi, esi
-	mov esi, CurrPosition; 假设CurrPosition记录当前人的位置, esi记录当前人位置
-	mov edi, esi
-	sub edi, 1; edi记录人的左方位置
 
-	; 设置角色脸朝向
+	xor esi, esi
+	mov esi, CurrPosition
+	mov edi, esi
+	sub edi, 1
+
+
 	invoke setPlayerDirection, DIRECTION_LEFT
 
-	; 判断左方格子类型
-	; 如果是空地或结束点, 人移动
+
 	.if CurrentMapText[edi * 4] == GRID_EMPTY || CurrentMapText[edi * 4] == GRID_TARGET
-		mov dword ptr CurrPosition, edi; 改变人的当前位置
-		mov dword ptr CurrentMapText[edi * 4], GRID_BABY; 改变左方方格属性
-		mov eax, OriginMapText[esi * 4]
+		mov dword ptr CurrPosition, edi
+		mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+		mov eax, OriginMap[esi * 4]
 		mov CurrentMapText[esi * 4], eax
 		; 刷新格子
 		invoke updateGrid, edi
 		invoke updateGrid, esi
-	; 如果是箱子
+	; 箱子
 	.elseif CurrentMapText[edi * 4] == GRID_BOX
-		; 判断箱子那边是什么
+
 		xor ecx, ecx
 		mov ecx, edi
-		sub ecx, 1; ecx是人的左左方位置
+		sub ecx, 1
 
-		; 如果是围墙或箱子
 		.if CurrentMapText[ecx * 4] == GRID_WALL || CurrentMapText[ecx * 4] == GRID_BOX
-			; .continue
-			; 刷新格子
+
 			invoke updateGrid, esi
 		.else
-			; 只可能是空地或存放点，可以移动
-			mov dword ptr CurrPosition, edi; 改变人的当前位置
+			mov dword ptr CurrPosition, edi; 改变当前位置
 			mov dword ptr CurrentMapText[ecx * 4], GRID_BOX
 			mov dword ptr CurrentMapText[edi * 4], GRID_BABY
-			mov eax, OriginMapText[esi * 4]
+			mov eax, OriginMap[esi * 4]
 			mov CurrentMapText[esi * 4], eax
 			; 刷新格子
 			invoke updateGrid, ecx
@@ -445,50 +431,45 @@ MoveLeft proc
 		.endif
 
 	.else
-		; 是墙
+		;墙
 		invoke updateGrid, esi
 	.endif
 	ret
 MoveLeft endp
 
 MoveRight proc
-	; 找到当前人的位置
-	xor esi, esi
-	mov esi, CurrPosition; 假设CurrPosition记录当前人的位置, esi记录当前人位置
-	mov edi, esi
-	add edi, 1; edi记录人的右方位置
 
-	; 设置角色脸朝向
+	xor esi, esi
+	mov esi, CurrPosition
+	mov edi, esi
+	add edi, 1
+
 	invoke setPlayerDirection, DIRECTION_RIGHT
 
-	; 判断左方格子类型
-	; 如果是空地或结束点, 人移动
 	.if CurrentMapText[edi * 4] == GRID_EMPTY || CurrentMapText[edi * 4] == GRID_TARGET
-		mov dword ptr CurrPosition, edi; 改变人的当前位置
-		mov dword ptr CurrentMapText[edi * 4], GRID_BABY; 改变右方方格属性
-		mov eax, OriginMapText[esi * 4]
+		mov dword ptr CurrPosition, edi
+		mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+		mov eax, OriginMap[esi * 4]
 		mov CurrentMapText[esi * 4], eax
-		; 刷新格子
+
 		invoke updateGrid, edi
 		invoke updateGrid, esi
-	; 如果是箱子
+
 	.elseif CurrentMapText[edi * 4] == GRID_BOX
-		; 判断箱子那边是什么
+
 		xor ecx, ecx
 		mov ecx, edi
-		add ecx, 1; ecx是人的右右方位置
+		add ecx, 1
 
-		; 如果是围墙或箱子
 		.if CurrentMapText[ecx * 4] == GRID_WALL || CurrentMapText[ecx * 4] == GRID_BOX
-			; .continue
-			; 刷新格子
+
 			invoke updateGrid, esi
 		.else
-			; 只可能是空地或存放点，可以移动
-			mov dword ptr CurrPosition, edi; 改变人的当前位置
+			; 移动
+			mov dword ptr CurrPosition, edi; 改变当前位置
 			mov dword ptr CurrentMapText[ecx * 4], GRID_BOX
 			mov dword ptr CurrentMapText[edi * 4], GRID_BABY
-			mov eax, OriginMapText[esi * 4]
+			mov eax, OriginMap[esi * 4]
 			mov CurrentMapText[esi * 4], eax
 			; 刷新格子
 			invoke updateGrid, ecx
@@ -497,9 +478,8 @@ MoveRight proc
 		.endif
 
 	.else
-		; 是墙
+		; 墙
 		invoke updateGrid, esi
-	; .continue
 	.endif
 	ret
 MoveRight endp

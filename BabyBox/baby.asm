@@ -4,7 +4,7 @@ option casemap: none
 
 include babybox.inc
 
-extern CurrentMapText: dword, OriginMapText: dword
+extern CurrentMapText: dword, OriginMap: dword
 
 
 .data
@@ -86,7 +86,7 @@ getGridType proc index: dword
 		mov eax, GRID_BABY_UP
 		add eax, babyDirection
 	.elseif eax == GRID_BOX
-		mov eax, OriginMapText[edi * 4]
+		mov eax, OriginMap[edi * 4]
 		.if eax == GRID_TARGET
 			mov eax, GRID_BOX_TARGET
 		.else
