@@ -19,7 +19,7 @@ includelib msvcrt.lib
 
 ; ————函数定义————
 
-WinMain             PROTO :DWORD, :DWORD, :DWORD, :DWORD	; 窗口主程序
+MainPro             PROTO :DWORD, :DWORD, :DWORD, :DWORD	; 窗口主程序
 Calculate           PROTO :DWORD, :DWORD, :DWORD, :DWORD	; 消息处理程序
 InitRec             PROTO :DWORD							; 初始化方格矩阵
 InitBack            PROTO       							; 初始化颜色数组
@@ -58,13 +58,6 @@ drawImage			PROTO :HBITMAP, :SWORD, :SWORD,: DWORD, : DWORD
 
 MAX_LEN		EQU	100											; 最大长度
 REC_LEN		EQU	100											; 矩阵最大长度
-BRUSH_LEN	EQU 6
-Number0		EQU 00b4c1cdh
-Number1		EQU 008cfeffh
-Number2		EQU 0097d0e8h
-Number3		EQU 0091d2ffh
-Number4		EQU 007999e8h
-Number5		EQU 00918fffh
 DialogBack	EQU 00eff8fah
 StageBack   EQU 00a0adbbh
 TextColor   EQU 00000000h
@@ -96,9 +89,6 @@ SCENE_INITIAL equ 0		; 初始化的场景
 SCENE_CHOOSE_LEVEL equ 1; 选择关卡场景
 SCENE_LEVEL equ 2		; 关卡场景
 SCENE_DESTINATION equ 3	; 通关场景
-
-externdef CurrentMapText: dword
-externdef OriginMapText: dword
 
 ; 控件绑定
 IDD_DIALOG1            EQU         102

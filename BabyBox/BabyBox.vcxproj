@@ -140,6 +140,8 @@
   <ItemGroup>
     <MASM Include="baby.asm" />
     <MASM Include="babybox.asm" />
+    <MASM Include="createMap.asm" />
+    <MASM Include="main.asm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="babybox.inc" />

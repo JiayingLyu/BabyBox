@@ -4,11 +4,14 @@ option casemap: none
 
 include babybox.inc
 
+extern CurrentMapText: dword, OriginMapText: dword
+
+
 .data
 
 ; bmp图片路径
 initialImagePath byte "./asset/choose.bmp", 0h
-destinationImagePath byte "./pic/clear.bmp", 0h
+destinationImagePath byte "./asset/choose.bmp", 0h
 boxImagePath byte "./asset/box.bmp", 0h
 babyUPImagePath byte "./asset/baby_up.bmp", 0h
 babyRIGHTImagePath byte   "./asset/baby_right.bmp",0h
@@ -42,13 +45,13 @@ mainBitmapDC HDC ?			;"Handle to a Device Context"
 .code
 
 ; 设置主窗体id
-setMainWindowsId proc windows: HWND
-	mov eax, windows
+setMainWindowsId proc id: HWND
+	mov eax, id
 	mov mainWindowsId, eax
-
 	ret
 setMainWindowsId endp
 
+; 开始游戏
 startGame proc
 	mov scene, SCENE_LEVEL
 
