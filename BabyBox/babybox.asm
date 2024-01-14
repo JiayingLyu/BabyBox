@@ -4,7 +4,7 @@ option casemap: none
 
 include babybox.inc
 
-public CurrentMapText, OriginMap,CurrPosition,handleMain,handleAcce
+public CurrentMap, OriginMap,CurrPosition,handleMain,handleAcce
 
 
 .data
@@ -30,7 +30,7 @@ strZero byte "0", 0h
 isWin			db		0					; 判断是否成功
 CurrPosition	dd		0					; 记录人的位置
 OriginMap	dd		MAX_LEN dup(0)		; 原始地图矩阵
-CurrentMapText  dd      MAX_LEN dup(0)		; 当前地图矩阵
+CurrentMap  dd      MAX_LEN dup(0)		; 当前地图矩阵
 
 
 .code
@@ -85,7 +85,7 @@ IsWin proc
 	; 检查矩阵中是否所有的目标都已到达
 	.while eax < MAX_LEN
 		.if OriginMap[eax * 4] == 5 
-			.if CurrentMapText[eax * 4] == 4
+			.if CurrentMap[eax * 4] == 4
 			jmp L1
 			.else 
 				jmp NotWin
@@ -302,31 +302,31 @@ MoveUp proc
 	invoke setPlayerDirection, DIRECTION_UP
 
 	; 空或target
-	.if CurrentMapText[edi * 4] == GRID_EMPTY || CurrentMapText[edi * 4] == GRID_TARGET
+	.if CurrentMap[edi * 4] == GRID_EMPTY || CurrentMap[edi * 4] == GRID_TARGET
 		mov  CurrPosition, edi
-		mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+		mov dword ptr CurrentMap[edi * 4], GRID_BABY
 		mov eax, OriginMap[esi * 4]
-		mov CurrentMapText[esi * 4], eax
+		mov CurrentMap[esi * 4], eax
 		; 刷新格子
 		invoke updateGrid, edi
 		invoke updateGrid, esi
 
 	; 箱子：判断箱子上方
-	.elseif CurrentMapText[edi * 4] == GRID_BOX
+	.elseif CurrentMap[edi * 4] == GRID_BOX
 		xor ecx, ecx
 		mov ecx, edi
 		sub ecx, 10; ecx-上上方位置
 
 		; 如果是围墙或箱子
-		.if CurrentMapText[ecx * 4] == GRID_WALL || CurrentMapText[ecx * 4] == GRID_BOX
+		.if CurrentMap[ecx * 4] == GRID_WALL || CurrentMap[ecx * 4] == GRID_BOX
 			; 刷新格子
 			invoke updateGrid, esi
 		.else ; 可移动
 			mov CurrPosition, edi
-			mov dword ptr CurrentMapText[ecx * 4], GRID_BOX
-			mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+			mov dword ptr CurrentMap[ecx * 4], GRID_BOX
+			mov dword ptr CurrentMap[edi * 4], GRID_BABY
 			mov eax, OriginMap[esi * 4]
-			mov CurrentMapText[esi * 4], eax
+			mov CurrentMap[esi * 4], eax
 			; 刷新格子
 			invoke updateGrid, ecx
 			invoke updateGrid, edi
@@ -350,32 +350,32 @@ MoveDown proc
 
 	invoke setPlayerDirection, DIRECTION_DOWN
 
-	.if CurrentMapText[edi * 4] == GRID_EMPTY || CurrentMapText[edi * 4] == GRID_TARGET
+	.if CurrentMap[edi * 4] == GRID_EMPTY || CurrentMap[edi * 4] == GRID_TARGET
 		mov dword ptr CurrPosition, edi
-		mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+		mov dword ptr CurrentMap[edi * 4], GRID_BABY
 		mov eax, OriginMap[esi * 4]
-		mov CurrentMapText[esi * 4], eax
+		mov CurrentMap[esi * 4], eax
 		; 刷新格子
 		invoke updateGrid, edi
 		invoke updateGrid, esi
 
 	; 箱子
-	.elseif CurrentMapText[edi * 4] == GRID_BOX
+	.elseif CurrentMap[edi * 4] == GRID_BOX
 
 		xor ecx, ecx
 		mov ecx, edi
 		add ecx, 10; ecx下下方位置
 
 		; 围墙或箱子
-		.if CurrentMapText[ecx * 4] == GRID_WALL || CurrentMapText[ecx * 4] == GRID_BOX
+		.if CurrentMap[ecx * 4] == GRID_WALL || CurrentMap[ecx * 4] == GRID_BOX
 			invoke updateGrid, esi
 		.else
 			; 可以移动
 			mov CurrPosition, edi; 改变人的当前位置
-			mov dword ptr CurrentMapText[ecx * 4], GRID_BOX
-			mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+			mov dword ptr CurrentMap[ecx * 4], GRID_BOX
+			mov dword ptr CurrentMap[edi * 4], GRID_BABY
 			mov eax, OriginMap[esi * 4]
-			mov CurrentMapText[esi * 4], eax
+			mov CurrentMap[esi * 4], eax
 			; 刷新格子
 			invoke updateGrid, ecx
 			invoke updateGrid, edi
@@ -400,30 +400,30 @@ MoveLeft proc
 	invoke setPlayerDirection, DIRECTION_LEFT
 
 
-	.if CurrentMapText[edi * 4] == GRID_EMPTY || CurrentMapText[edi * 4] == GRID_TARGET
+	.if CurrentMap[edi * 4] == GRID_EMPTY || CurrentMap[edi * 4] == GRID_TARGET
 		mov dword ptr CurrPosition, edi
-		mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+		mov dword ptr CurrentMap[edi * 4], GRID_BABY
 		mov eax, OriginMap[esi * 4]
-		mov CurrentMapText[esi * 4], eax
+		mov CurrentMap[esi * 4], eax
 		; 刷新格子
 		invoke updateGrid, edi
 		invoke updateGrid, esi
 	; 箱子
-	.elseif CurrentMapText[edi * 4] == GRID_BOX
+	.elseif CurrentMap[edi * 4] == GRID_BOX
 
 		xor ecx, ecx
 		mov ecx, edi
 		sub ecx, 1
 
-		.if CurrentMapText[ecx * 4] == GRID_WALL || CurrentMapText[ecx * 4] == GRID_BOX
+		.if CurrentMap[ecx * 4] == GRID_WALL || CurrentMap[ecx * 4] == GRID_BOX
 
 			invoke updateGrid, esi
 		.else
 			mov dword ptr CurrPosition, edi; 改变当前位置
-			mov dword ptr CurrentMapText[ecx * 4], GRID_BOX
-			mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+			mov dword ptr CurrentMap[ecx * 4], GRID_BOX
+			mov dword ptr CurrentMap[edi * 4], GRID_BABY
 			mov eax, OriginMap[esi * 4]
-			mov CurrentMapText[esi * 4], eax
+			mov CurrentMap[esi * 4], eax
 			; 刷新格子
 			invoke updateGrid, ecx
 			invoke updateGrid, edi
@@ -446,31 +446,31 @@ MoveRight proc
 
 	invoke setPlayerDirection, DIRECTION_RIGHT
 
-	.if CurrentMapText[edi * 4] == GRID_EMPTY || CurrentMapText[edi * 4] == GRID_TARGET
+	.if CurrentMap[edi * 4] == GRID_EMPTY || CurrentMap[edi * 4] == GRID_TARGET
 		mov dword ptr CurrPosition, edi
-		mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+		mov dword ptr CurrentMap[edi * 4], GRID_BABY
 		mov eax, OriginMap[esi * 4]
-		mov CurrentMapText[esi * 4], eax
+		mov CurrentMap[esi * 4], eax
 
 		invoke updateGrid, edi
 		invoke updateGrid, esi
 
-	.elseif CurrentMapText[edi * 4] == GRID_BOX
+	.elseif CurrentMap[edi * 4] == GRID_BOX
 
 		xor ecx, ecx
 		mov ecx, edi
 		add ecx, 1
 
-		.if CurrentMapText[ecx * 4] == GRID_WALL || CurrentMapText[ecx * 4] == GRID_BOX
+		.if CurrentMap[ecx * 4] == GRID_WALL || CurrentMap[ecx * 4] == GRID_BOX
 
 			invoke updateGrid, esi
 		.else
 			; 移动
 			mov dword ptr CurrPosition, edi; 改变当前位置
-			mov dword ptr CurrentMapText[ecx * 4], GRID_BOX
-			mov dword ptr CurrentMapText[edi * 4], GRID_BABY
+			mov dword ptr CurrentMap[ecx * 4], GRID_BOX
+			mov dword ptr CurrentMap[edi * 4], GRID_BABY
 			mov eax, OriginMap[esi * 4]
-			mov CurrentMapText[esi * 4], eax
+			mov CurrentMap[esi * 4], eax
 			; 刷新格子
 			invoke updateGrid, ecx
 			invoke updateGrid, edi

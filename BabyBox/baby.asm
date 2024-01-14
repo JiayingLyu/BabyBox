@@ -4,7 +4,7 @@ option casemap: none
 
 include babybox.inc
 
-extern CurrentMapText: dword, OriginMap: dword
+extern CurrentMap: dword, OriginMap: dword
 
 
 .data
@@ -80,7 +80,7 @@ setPlayerDirection endp
 ; 获取格子类型
 getGridType proc index: dword	
 	mov edi, index
-	mov eax, CurrentMapText[edi * 4]
+	mov eax, CurrentMap[edi * 4]
 
 	.if eax == GRID_BABY
 		mov eax, GRID_BABY_UP

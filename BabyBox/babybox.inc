@@ -87,7 +87,6 @@ SCENE_DESTINATION equ 3										; 通关场景
 
 ; 控件绑定
 IDD_DIALOG1            EQU         102
-IDR_MENU1              EQU         108
 IDR_ACCELERATOR2       EQU         109
 IDC_NEW                EQU         1007
 IDC_DATE               EQU         1008
@@ -113,6 +112,5 @@ IDC_BLEVEL6            EQU         1135
 IDC_BLEVEL7            EQU         1136
 IDC_BLEVEL8            EQU         1137
 IDC_BLEVEL9            EQU         1138
-IDC_BLEVEL10           EQU         1139
 
 endif
